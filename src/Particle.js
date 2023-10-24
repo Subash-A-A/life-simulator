@@ -1,90 +1,80 @@
 class Particle {
-  constructor(position, velocity, radius, color) {
-    this.position = position;
-    this.velocity = velocity;
-    this.radius = radius;
+  constructor(position, velocity, color) {
+    this.x = position.x;
+    this.y = position.y;
+    this.velX = velocity.x;
+    this.velY = velocity.y;
     this.color = color;
-    this.colorStr = "";
-    this.world = null;
-
-    this.init();
+    this.radius = 2;
   }
 
-  init() {
-    this.colorStr = pickColor(this.color, COLORS);
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.colorStr;
-    ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-    ctx.fill();
+  draw(context) {
+    context.fillStyle = COLORS[this.color];
+    context.beginPath();
+    context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    context.fill();
   }
 
   update(delta) {
-    // this.checkBounds();
-    this.updateVelocity(delta);
-    this.updatePosition(delta);
-  }
-  updateVelocity(delta) {
-    const particles = this.world.particles;
-
+    // Update Velocity
     let totalForceX = 0;
     let totalForceY = 0;
 
-    for (let i = 0; i < particles.length; i++) {
-      if (particles[i] == this) continue;
-      // 1 --> this, 2--> other particle
-      const x1 = this.position.x;
-      const y1 = this.position.y;
-      const x2 = particles[i].position.x;
-      const y2 = particles[i].position.y;
+    for (let i = 0; i < swarm.length; i++) {
+      const particle = swarm[i];
 
-      const delX = x2 - x1;
-      const delY = y2 - y1;
+      if (particle == this) continue;
 
-      const d = Math.hypot(delX, delY);
+      let dx = particle.x - this.x;
+      let dy = particle.y - this.y;
 
-      if (d > 0 && d < MAX_DIST) {
-        const force = this.force(
-          d / MAX_DIST,
-          AFFINITY_MATRIX[this.color][particles[i].color]
-        );
+      // Torous like environment (min dist calculation)
+      if (dx > sizes.x / 2) {
+        dx -= sizes.x;
+      } else if (dx < -sizes.x / 2) {
+        dx += sizes.x;
+      }
+      if (dy > sizes.y / 2) {
+        dy -= sizes.y;
+      } else if (dy < -sizes.y / 2) {
+        dy += sizes.y;
+      }
 
-        totalForceX += (delX / d) * force;
-        totalForceY += (delY / d) * force;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      const affinity = AFFINITY_MATRIX[this.color * N_COLORS + particle.color];
+
+      if (dist > 0 && dist < UNIT_DIST) {
+        const force = this.force(dist / UNIT_DIST, affinity);
+        totalForceX += (dx / dist) * force;
+        totalForceY += (dy / dist) * force;
       }
     }
 
-    totalForceX *= MAX_DIST;
-    totalForceY *= MAX_DIST;
+    totalForceX *= UNIT_DIST * FORCE_SCALE;
+    totalForceY *= UNIT_DIST * FORCE_SCALE;
 
-    this.velocity.x *= FRICTION_FACTOR;
-    this.velocity.y *= FRICTION_FACTOR;
+    this.velX *= FIRCTION;
+    this.velY *= FIRCTION;
 
-    this.velocity.x += totalForceX * 0.000001 * delta;
-    this.velocity.y += totalForceY * 0.000001 * delta;
+    this.velX += totalForceX * delta;
+    this.velY += totalForceY * delta;
+
+    // Update Position
+    this.x += this.velX * delta;
+    this.y += this.velY * delta;
+
+    this.x = (this.x + sizes.x) % sizes.x;
+    this.y = (this.y + sizes.y) % sizes.y;
   }
-
-  updatePosition(delta) {
-    this.position.x =
-      (this.position.x + this.velocity.x * delta) % window.innerWidth;
-    this.position.y =
-      (this.position.y + this.velocity.y * delta) % window.innerHeight;
-  }
-
-  checkBounds() {}
 
   force(dist, affinity) {
-    const threshold = 0.3;
-    // Global particle repulsion
-    // To prevent clumping of particles at center
-    if (dist < threshold) {
-      return dist / threshold - 1;
-    } else if (dist > threshold && dist < 1) {
-      return (
-        affinity * (1 - Math.abs(2 * dist - 1 - threshold) / (1 - threshold))
-      );
+    const beta = 0.3;
+
+    if (dist <= beta) {
+      return dist / beta - 1;
+    } else if (dist > beta && dist < 1) {
+      return affinity * (1 - Math.abs(2 * dist - 1 - beta) / (1 - beta));
     } else {
       return 0;
     }

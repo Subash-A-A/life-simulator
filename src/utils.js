@@ -1,31 +1,29 @@
-const getRandomColors = (n_colors) => {
+function generateColors(n_colors) {
   const colors = [];
+  const hueStep = 360 / n_colors; // Calculate the step between hues
+
   for (let i = 0; i < n_colors; i++) {
-    const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-    colors.push(randomColor);
+    const hue = (i * hueStep) % 360; // Calculate the hue for each sector
+    const saturation = 100; // You can adjust the saturation and lightness values
+    const lightness = 70; // to control the vibrancy of the colors.
+
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
   }
 
   return colors;
-};
+}
 
-const pickRandomColorIndex = (colors) => {
-  return Math.floor(Math.random() * colors.length);
-};
+function createRandomFloat32Array(n) {
+  const array = new Float32Array(n * n);
 
-const pickColor = (index, colors) => {
-  return colors[index];
-};
-
-const generateRandomAffinityMatrix = (n_colors) => {
-  const affinityMatrix = [];
-  for (let i = 0; i < n_colors; i++) {
-    let currentColorMatrix = [];
-    affinityMatrix.push(currentColorMatrix);
-    for (let j = 0; j < n_colors; j++) {
-      // Ranges from -1 to +1
-      const randomAffinity = (Math.random() - 0.5) * 2;
-      affinityMatrix[i].push(randomAffinity);
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      // Generate a random number between -1 and 1
+      const randomValue = Math.random() * 2 - 1;
+      const index = i * n + j;
+      array[index] = randomValue;
     }
   }
-  return affinityMatrix;
-};
+
+  return array;
+}
