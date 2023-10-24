@@ -28,13 +28,13 @@ window.addEventListener("keydown", (e) => {
  * N denotes the number of particles
  * colors = 0, 1, 2, 3, 4, if N_COLORS = 5
  */
-const N = 1500;
+const N = 1000;
 const N_COLORS = 4;
 const COLORS = generateColors(N_COLORS);
 const UNIT_DIST = 120;
-const FIRCTION = 0.25;
+const FIRCTION = 0.04;
 const TIME_SCALE = 1;
-const FORCE_SCALE = 30;
+const FORCE_SCALE = 50;
 const LINE_DIST = 30;
 
 let AFFINITY_MATRIX = createRandomFloat32Array(N_COLORS);
@@ -61,7 +61,7 @@ const tick = () => {
 
   for (const particle of swarm) {
     particle.update(0.01 * TIME_SCALE);
-    particle.draw(context);
+    particle.draw();
   }
 
   window.requestAnimationFrame(tick);

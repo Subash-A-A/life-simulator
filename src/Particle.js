@@ -8,7 +8,7 @@ class Particle {
     this.radius = 2;
   }
 
-  draw(context) {
+  draw() {
     context.fillStyle = COLORS[this.color];
     context.beginPath();
     context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
@@ -43,6 +43,9 @@ class Particle {
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       const affinity = AFFINITY_MATRIX[this.color * N_COLORS + particle.color];
+
+      if (dist < LINE_DIST) {
+      }
 
       if (dist > 0 && dist < UNIT_DIST) {
         const force = this.force(dist / UNIT_DIST, affinity);
