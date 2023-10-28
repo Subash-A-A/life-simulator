@@ -7,9 +7,30 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="main-container" id="values-container">
+      <h1>PARAMETERS</h1>
+      <div
+        class="menu-button"
+        id="value-button"
+        title="Adjust Values"
+        onclick="toggleElement('values-container', this)"
+      ></div>
+      <div class="values" id="values"></div>
+    </div>
+    <div class="main-container" id="preset-container">
+      <h1>CONFIGURATION</h1>
+      <div
+        class="menu-button"
+        id="preset-button"
+        title="Adjust Preset"
+        onclick="toggleElement('preset-container', this)"
+      ></div>
+      <div class="presets" id="presets"></div>
+    </div>
     <canvas id="canvas"></canvas>
     <script src="Particle.js"></script>
     <script src="utils.js"></script>
     <script src="main.js"></script>
+    <script src="UI.js"></script>
   </body>
 </html>
