@@ -8,6 +8,8 @@
 
 :root {
   --menu-bg: rgba(36, 37, 46, 0.98);
+  --controls-bg: rgba(36, 37, 46, 0.75);
+  --control-btns: rgba(255, 255, 255, 0.5);
   --light-border: rgba(255, 255, 255, 0.75);
 }
 
@@ -22,7 +24,52 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  /* filter: blur(10px) contrast(20); */
+  /* filter: blur(4px) contrast(20); */
+}
+
+.controls-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--controls-bg);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 10px 20px;
+}
+
+.controls-container button {
+  cursor: pointer;
+  border-radius: 20%;
+  border: none;
+  width: 30px;
+  aspect-ratio: 1;
+  background-color: var(--control-btns);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.controls-container button:hover {
+  background-color: white;
+}
+
+#play {
+  background-image: url("/assets/play.svg");
+}
+#restart {
+  background-image: url("/assets/restart.svg");
+}
+#step {
+  background-image: url("/assets/skip.svg");
+}
+
+.pause {
+  background-image: url("/assets/pause.svg") !important;
 }
 
 .main-container {
@@ -42,6 +89,7 @@ body {
   flex-direction: column;
   gap: 30px;
   z-index: 0;
+  transition: all 0.2s ease;
 }
 
 .main-container h1 {
@@ -84,7 +132,43 @@ body {
   background-image: url("../assets/close.svg") !important;
 }
 
-.presets {
+#values {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: scroll;
+}
+
+.value {
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.value h2 {
+  text-align: left;
+  color: white;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.value input {
+  width: 35%;
+  height: 35px;
+  padding: 20px 20px;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.308);
+  border: 1px solid transparent;
+  color: white;
+  font-size: 20px;
+}
+
+#presets {
   padding: 20px;
   width: 100%;
   display: flex;
@@ -95,15 +179,18 @@ body {
   overflow-y: scroll;
 }
 
-.presets::-webkit-scrollbar {
+#presets::-webkit-scrollbar,
+#values::-webkit-scrollbar {
   width: 3px;
 }
 
-.presets::-webkit-scrollbar-thumb {
+#presets::-webkit-scrollbar-thumb,
+#values::-webkit-scrollbar-thumb {
   width: 100%;
   background-color: aliceblue;
 }
-.presets::-webkit-scrollbar-track {
+#presets::-webkit-scrollbar-track,
+#values::-webkit-scrollbar-track {
   width: 0.1px;
   border: 0.1px solid transparent;
   background-clip: content-box;
@@ -140,7 +227,8 @@ body {
   padding: 10px;
 }
 
-.preset-row div {
+.preset-row div,
+.preset-row input {
   width: 50px;
   aspect-ratio: 1;
   display: grid;
@@ -152,5 +240,8 @@ body {
 }
 
 .numeric {
+  border: none;
+  background-color: transparent;
   color: white;
+  text-align: center;
 }

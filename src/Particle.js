@@ -87,7 +87,7 @@ class Particle {
         const stabilityNumber = CONFIG.STABILITY_MATRIX[this.color];
         const force =
           this.force(dist / PARAMS.UNIT_DIST, affinity, beta) -
-          (neighbours / stabilityNumber) * 1;
+          (neighbours / stabilityNumber) * PARAMS.STABILITY_WEIGHT;
 
         totalForceX += (dx / dist) * force;
         totalForceY += (dy / dist) * force;

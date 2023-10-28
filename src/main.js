@@ -1,3 +1,7 @@
+const SIM_STATE = {
+  PAUSED: false,
+};
+
 const PARAMS = {
   N: 1000,
   N_COLORS: 3,
@@ -7,6 +11,7 @@ const PARAMS = {
   FORCE_SCALE: 30,
   LINE_DIST: 0.2,
   ENTITY_CRAMMING_COUNT: 35,
+  STABILITY_WEIGHT: 1,
   SHOW_LINES: true,
   ENABLE_GRADIENT_LINES: false,
 };
@@ -17,6 +22,8 @@ const CONFIG = {
   STABILITY_MATRIX: generateStabilityMatrix(PARAMS.N_COLORS, 10, 20),
   BETA_MATRIX: createRandomBetaMatrix(PARAMS.N_COLORS),
 };
+
+const swarm = [];
 
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
@@ -52,8 +59,6 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-const swarm = [];
-
 const spwanParticle = () => {
   const x = Math.random() * sizes.x;
   const y = Math.random() * sizes.y;
@@ -61,17 +66,14 @@ const spwanParticle = () => {
   swarm.push(new Particle({ x, y }, { x: 0, y: 0 }, color));
 };
 
-for (let i = 0; i < PARAMS.N; i++) {
-  spwanParticle();
-}
-
-let time = new Date();
+const startSimulation = () => {
+  swarm.length = 0;
+  for (let i = 0; i < PARAMS.N; i++) {
+    spwanParticle();
+  }
+};
 
 const tick = () => {
-  // const currentTime = new Date();
-  // const delta = currentTime - time;
-  // time = currentTime;
-
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   for (const particle of swarm) {
@@ -79,7 +81,10 @@ const tick = () => {
     particle.draw();
   }
 
-  window.requestAnimationFrame(tick);
+  if (!SIM_STATE.PAUSED) {
+    window.requestAnimationFrame(tick);
+  }
 };
 
+startSimulation();
 tick();

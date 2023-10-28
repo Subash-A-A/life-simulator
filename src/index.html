@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="controls-container">
+      <button
+        id="restart"
+        title="Restart simulation using current parameters and configuration"
+      ></button>
+      <button
+        id="play"
+        onclick="pausePlaySim(this)"
+        title="Plause/Play"
+      ></button>
+      <button id="step" onclick="stepSim()" title="Step to next frame"></button>
+    </div>
     <div class="main-container" id="values-container">
       <h1>PARAMETERS</h1>
       <div
@@ -16,6 +28,7 @@
         onclick="toggleElement('values-container', this)"
       ></div>
       <div class="values" id="values"></div>
+      <button>SAVE</button>
     </div>
     <div class="main-container" id="preset-container">
       <h1>CONFIGURATION</h1>

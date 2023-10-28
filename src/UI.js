@@ -1,27 +1,38 @@
 const presetBtn = document.getElementById("preset-button");
 const presets = document.getElementById("presets");
+const values = document.getElementById("values");
 
-function getCaretPosition(element) {
-  if (window.getSelection && window.getSelection().getRangeAt) {
-    const range = window.getSelection().getRangeAt(0);
-    const selected = range.toString().length;
-    const preCaretRange = range.cloneRange();
-    preCaretRange.selectNodeContents(element);
-    preCaretRange.setEnd(range.endContainer, range.endOffset);
-    const caret = preCaretRange.toString().length;
-    return { start: caret, end: caret + selected };
+const keyNameMapping = {
+  N: "COUNT",
+  N_COLORS: "COLORS",
+  UNIT_DIST: "UNIT DISTANCE",
+  FIRCTION: "FRICTION",
+  TIME_SCALE: "TIME SCALE",
+  FORCE_SCALE: "FORCE SCALE",
+  LINE_DIST: "LINE DISTANCE",
+  ENTITY_CRAMMING_COUNT: "CRAMMING COUNT",
+  SHOW_LINES: "SHOW LINES",
+  ENABLE_GRADIENT_LINES: "SHOW GRADIENT LINES",
+  STABILITY_WEIGHT: "STABILITY WEIGHT",
+};
+
+const pausePlaySim = (btn) => {
+  if (!SIM_STATE.PAUSED) {
+    btn.classList.add("pause");
+    SIM_STATE.PAUSED = true;
+  } else {
+    btn.classList.remove("pause");
+    SIM_STATE.PAUSED = false;
+    tick();
   }
-  return { start: 0, end: 0 };
-}
+};
 
-function setCaretPosition(element, position) {
-  const range = document.createRange();
-  const sel = window.getSelection();
-  range.setStart(element.childNodes[0], position.start);
-  range.setEnd(element.childNodes[0], position.end);
-  sel.removeAllRanges();
-  sel.addRange(range);
-}
+const stepSim = () => {
+  if (SIM_STATE.PAUSED) {
+    tick();
+  }
+  return;
+};
 
 const toggleElement = (element, button) => {
   const menu = document.getElementById(element);
@@ -43,7 +54,7 @@ const createElement = (type, classList) => {
   return element;
 };
 
-const createTable = (matrix, name, colors) => {
+const createTable = (matrix, name, colors, min, max) => {
   const preset = createElement("div", ["preset"]);
   const h2 = document.createElement("h2");
   h2.innerText = name;
@@ -69,20 +80,27 @@ const createTable = (matrix, name, colors) => {
     colorDiv.setAttribute("data-color", colors[i]);
     append(row, [colorDiv]);
     for (let j = 0; j < matrix[i].length; j++) {
-      let isEditing = false;
-      const numericDiv = createElement("div", ["numeric"]);
-      numericDiv.setAttribute("data-index", [i, j]);
-      numericDiv.setAttribute("contenteditable", true);
-      numericDiv.addEventListener("input", function (e) {
-        isEditing = true;
-        const text = numericDiv.innerText;
-        const caretPosition = getCaretPosition(numericDiv);
-        const sanitizedText = text.replace(/[^0-9.-]/g, "");
-        numericDiv.innerText = sanitizedText;
-        setCaretPosition(numericDiv, caretPosition);
+      const numeric = createElement("input", ["numeric"]);
+      numeric.setAttribute("data-index", [i, j]);
+      numeric.value = matrix[i][j].toFixed(2);
+      numeric.type = "number";
+      numeric.min = min;
+      numeric.max = max;
+      numeric.step = 0.25;
+
+      numeric.addEventListener("change", (e) => {
+        const val = e.target.value;
+        let newVal = 0;
+        if (val > max || val < min) {
+          e.target.value = val > 0 ? max : min;
+          newVal = e.target.value;
+        } else {
+          newVal = val;
+        }
+        matrix[i][j] = newVal;
       });
-      numericDiv.innerText = matrix[i][j].toFixed(2);
-      append(row, [numericDiv]);
+
+      append(row, [numeric]);
     }
     append(preset, [row]);
   }
@@ -92,7 +110,7 @@ const createTable = (matrix, name, colors) => {
   assignColors();
 };
 
-const create1D = (array, name, colors) => {
+const create1D = (array, name, colors, min, max) => {
   const preset = createElement("div", ["preset"]);
   const h2 = document.createElement("h2");
   h2.innerText = name;
@@ -112,11 +130,27 @@ const create1D = (array, name, colors) => {
 
   const row = createElement("div", ["preset-row"]);
   for (let i = 0; i < array.length; i++) {
-    const numericDiv = createElement("div", ["numeric"]);
-    numericDiv.setAttribute("data-index", [i]);
-    numericDiv.setAttribute("contenteditable", true);
-    numericDiv.innerText = array[i].toFixed(2);
-    append(row, [numericDiv]);
+    const numeric = createElement("input", ["numeric"]);
+    numeric.setAttribute("data-index", [i]);
+    numeric.setAttribute("contenteditable", true);
+    numeric.value = array[i].toFixed(2);
+    numeric.type = "number";
+    numeric.min = min;
+    numeric.max = max;
+
+    numeric.addEventListener("change", (e) => {
+      const val = e.target.value;
+      let newVal = 0;
+      if (val > max || val < min) {
+        e.target.value = val > 0 ? max : min;
+        newVal = e.target.value;
+      } else {
+        newVal = val;
+      }
+      array[i] = newVal;
+    });
+
+    append(row, [numeric]);
     append(preset, [row]);
   }
 
@@ -134,12 +168,48 @@ const assignColors = () => {
   });
 };
 
+const inputTypeMapper = (value) => {
+  if (typeof value == "number") {
+    return "number";
+  } else if (typeof value == "boolean") {
+    return "checkbox";
+  }
+};
+
+const createParamUI = () => {
+  for (const key in PARAMS) {
+    const valueDiv = createElement("div", ["value"]);
+    const h2 = createElement("h2", []);
+    const input = createElement("input", []);
+    input.type = inputTypeMapper(PARAMS[key]);
+
+    if (input.type == "checkbox") {
+      input.checked = PARAMS[key];
+    } else {
+      input.value = PARAMS[key];
+      input.addEventListener("change", (e) => {
+        PARAMS[key] = e.target.value;
+      });
+    }
+
+    h2.innerText = keyNameMapping[key];
+    append(valueDiv, [h2, input]);
+    append(values, [valueDiv]);
+    inputTypeMapper(PARAMS[key]);
+  }
+};
+
 const displayAllTables = () => {
   presets.innerHTML = "";
-  console.log("Inner HTML", presets.innerHTML);
-  createTable(CONFIG.AFFINITY_MATRIX, "AFFINITY MATRIX", CONFIG.COLORS);
-  createTable(CONFIG.BETA_MATRIX, "BETA MATRIX", CONFIG.COLORS);
-  create1D(CONFIG.STABILITY_MATRIX, "STABILITY VALUES", CONFIG.COLORS);
+  values.innerHTML = "";
+  createParamUI();
+  updateConfiguration();
+};
+
+const updateConfiguration = () => {
+  createTable(CONFIG.AFFINITY_MATRIX, "AFFINITY MATRIX", CONFIG.COLORS, -1, 1);
+  createTable(CONFIG.BETA_MATRIX, "BETA MATRIX", CONFIG.COLORS, 0, 1);
+  create1D(CONFIG.STABILITY_MATRIX, "STABILITY VALUES", CONFIG.COLORS, 5, 50);
 };
 
 displayAllTables();
