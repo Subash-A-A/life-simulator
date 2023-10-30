@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Particle Life Simulator</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -11,6 +11,7 @@
       <button
         id="restart"
         title="Restart simulation using current parameters and configuration"
+        onclick="restartSim()"
       ></button>
       <button
         id="play"
@@ -28,7 +29,6 @@
         onclick="toggleElement('values-container', this)"
       ></div>
       <div class="values" id="values"></div>
-      <button>SAVE</button>
     </div>
     <div class="main-container" id="preset-container">
       <h1>CONFIGURATION</h1>

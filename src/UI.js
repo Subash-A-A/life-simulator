@@ -3,17 +3,17 @@ const presets = document.getElementById("presets");
 const values = document.getElementById("values");
 
 const keyNameMapping = {
-  N: "COUNT",
-  N_COLORS: "COLORS",
-  UNIT_DIST: "UNIT DISTANCE",
-  FIRCTION: "FRICTION",
-  TIME_SCALE: "TIME SCALE",
-  FORCE_SCALE: "FORCE SCALE",
-  LINE_DIST: "LINE DISTANCE",
-  ENTITY_CRAMMING_COUNT: "CRAMMING COUNT",
-  SHOW_LINES: "SHOW LINES",
-  ENABLE_GRADIENT_LINES: "SHOW GRADIENT LINES",
-  STABILITY_WEIGHT: "STABILITY WEIGHT",
+  N: { name: "COUNT", runtime_param: false },
+  N_COLORS: { name: "COLORS", runtime_param: false },
+  UNIT_DIST: { name: "UNIT DISTANCE", runtime_param: true },
+  FIRCTION: { name: "FRICTION", runtime_param: true },
+  TIME_SCALE: { name: "TIME SCALE", runtime_param: true },
+  FORCE_SCALE: { name: "FORCE SCALE", runtime_param: true },
+  LINE_DIST: { name: "LINE DISTANCE", runtime_param: true },
+  ENTITY_CRAMMING_COUNT: { name: "CRAMMING COUNT", runtime_param: true },
+  SHOW_LINES: { name: "SHOW LINES", runtime_param: true },
+  ENABLE_GRADIENT_LINES: { name: "SHOW GRADIENT LINES", runtime_param: true },
+  STABILITY_WEIGHT: { name: "STABILITY WEIGHT", runtime_param: true },
 };
 
 const pausePlaySim = (btn) => {
@@ -32,6 +32,21 @@ const stepSim = () => {
     tick();
   }
   return;
+};
+
+const restartSim = () => {
+  for (const key in TEMP) {
+    PARAMS[key] = TEMP[key];
+  }
+
+  CONFIG.AFFINITY_MATRIX = createRandomAffinityMatrix(PARAMS.N_COLORS);
+  CONFIG.BETA_MATRIX = createRandomBetaMatrix(PARAMS.N_COLORS);
+  CONFIG.STABILITY_MATRIX = generateStabilityMatrix(PARAMS.N_COLORS, 10, 20);
+  CONFIG.COLORS = generateColors(PARAMS.N_COLORS);
+
+  updateConfiguration();
+
+  startSimulation();
 };
 
 const toggleElement = (element, button) => {
@@ -185,14 +200,25 @@ const createParamUI = () => {
 
     if (input.type == "checkbox") {
       input.checked = PARAMS[key];
+      if (keyNameMapping[key].runtime_param) {
+        input.addEventListener("change", (e) => {
+          PARAMS[key] = e.target.checked;
+        });
+      }
     } else {
       input.value = PARAMS[key];
       input.addEventListener("change", (e) => {
-        PARAMS[key] = e.target.value;
+        if (keyNameMapping[key].runtime_param) {
+          PARAMS[key] = e.target.value;
+        } else {
+          TEMP[key] = e.target.value;
+        }
       });
     }
 
-    h2.innerText = keyNameMapping[key];
+    h2.innerText =
+      keyNameMapping[key].name +
+      (!keyNameMapping[key].runtime_param ? " (requires restart)" : "");
     append(valueDiv, [h2, input]);
     append(values, [valueDiv]);
     inputTypeMapper(PARAMS[key]);
@@ -200,16 +226,20 @@ const createParamUI = () => {
 };
 
 const displayAllTables = () => {
-  presets.innerHTML = "";
-  values.innerHTML = "";
-  createParamUI();
+  updateParams();
   updateConfiguration();
 };
 
 const updateConfiguration = () => {
+  presets.innerHTML = "";
   createTable(CONFIG.AFFINITY_MATRIX, "AFFINITY MATRIX", CONFIG.COLORS, -1, 1);
   createTable(CONFIG.BETA_MATRIX, "BETA MATRIX", CONFIG.COLORS, 0, 1);
   create1D(CONFIG.STABILITY_MATRIX, "STABILITY VALUES", CONFIG.COLORS, 5, 50);
+};
+
+const updateParams = () => {
+  values.innerHTML = "";
+  createParamUI();
 };
 
 displayAllTables();

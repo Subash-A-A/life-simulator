@@ -59,17 +59,17 @@ body {
 }
 
 #play {
-  background-image: url("/assets/play.svg");
+  background-image: url("../assets/play.svg");
 }
 #restart {
-  background-image: url("/assets/restart.svg");
+  background-image: url("../assets/restart.svg");
 }
 #step {
-  background-image: url("/assets/skip.svg");
+  background-image: url("../assets/skip.svg");
 }
 
 .pause {
-  background-image: url("/assets/pause.svg") !important;
+  background-image: url("../assets/pause.svg") !important;
 }
 
 .main-container {

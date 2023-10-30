@@ -12,6 +12,7 @@ function generateColors(n_colors) {
 
   return colors;
 }
+
 function generateStabilityMatrix(n_colors, min, max) {
   const stabilityMatrix = [];
 

@@ -16,6 +16,11 @@ const PARAMS = {
   ENABLE_GRADIENT_LINES: false,
 };
 
+const TEMP = {
+  N: PARAMS.N,
+  N_COLORS: PARAMS.N_COLORS,
+};
+
 const CONFIG = {
   COLORS: generateColors(PARAMS.N_COLORS),
   AFFINITY_MATRIX: createRandomAffinityMatrix(PARAMS.N_COLORS),
@@ -68,6 +73,7 @@ const spwanParticle = () => {
 
 const startSimulation = () => {
   swarm.length = 0;
+
   for (let i = 0; i < PARAMS.N; i++) {
     spwanParticle();
   }

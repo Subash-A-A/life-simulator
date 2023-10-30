@@ -1,0 +1,25 @@
+{
+  "name": "life-simulator",
+  "version": "1.0.0",
+  "description": "Simple rules can create complex behaviours. Embrace how particles behave in this simulator",
+  "main": "entry.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "pack": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^27.0.2",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "life.ratsby.in",
+    "productName": "Particle Life Simulator",
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
