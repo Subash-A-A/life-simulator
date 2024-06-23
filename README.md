@@ -1,4 +1,4 @@
-![Screenshot from 2024-06-23 13-12-50](https://github.com/Subash-A-A/life-simulator/assets/83503341/3feaa1fe-dce3-4636-8f3e-2a49cfefa190)# life-simulator
+# Particle Life Simulator
 Simple rules can create complex behaviours.
 
 # Simulator Parameters
