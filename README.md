@@ -2,18 +2,17 @@
 Simple rules can create complex behaviours.
 
 # Simulator Parameters
-1. COUNT: Number of particles in the simulation (Warning: Increasing the count too much could crash the simulation)
-2. COLORS: Number of distinct colors/types of particles
-3. PARTICLE SIZE: Size of the particles
-4. UNIT DISTANCE:
-5. FRICTION:
-6. TIME SCALE:
-7. FORCE SCALE:
-8. LINE DISTANCE:
-9. CRAMMING COUNT:
-10. STABILITY WEIGHT:
-11. SHOW LINES:
-12. SHOW GRADIENT LINES:
+1. COUNT: Number of particles in the simulation (Warning: Increasing the count too much could crash the simulation).
+2. COLORS: Number of distinct colors/types of particles.
+3. PARTICLE SIZE: Size of the particles.
+4. UNIT DISTANCE: The distance used to compute forces around a particle. If the distance is too small -- nearby particles wont be detected and the simulation would appear still.
+5. FRICTION: An opposing force applied to slow do the particles.
+6. TIME SCALE: The scale at which time passes.
+7. FORCE SCALE: Force multiplier.
+8. LINE DISTANCE: Distance used to draw lines. If two particles are closer than LINE DISTANCE, a line will be drawn between them.
+9. STABILITY WEIGHT: A multiplier for the stability value (Stability value is obtained from the STABILITY MATRIX, Check Configuration Matrices!).
+10. SHOW LINES: Option to display lines between particles.
+11. SHOW GRADIENT LINES: Option to display gradient lines between particles.
 
 # Configuration Matrices:
 1. AFFINITY MATRIX: Describes the strength of affinity (attract or repel) of a color towards other colors. 
