@@ -22,3 +22,4 @@ Simple rules can create complex behaviours.
 ![Screenshot from 2024-06-23 13-40-44](https://github.com/Subash-A-A/life-simulator/assets/83503341/a90007af-0511-4e19-a320-f3a85997a1ed)
 ![Screenshot from 2024-06-23 13-12-50](https://github.com/Subash-A-A/life-simulator/assets/83503341/166ce690-2c48-4ebd-862e-c1f811fdb3c7)
 ![Screenshot from 2024-06-23 13-14-35](https://github.com/Subash-A-A/life-simulator/assets/83503341/d0a74dfe-ba8a-4fcb-ba69-ffe07da8b74a)
+![image](https://github.com/Subash-A-A/life-simulator/assets/83503341/9e00b97f-a648-4079-88fa-a4207772349e)
